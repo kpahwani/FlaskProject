@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "form_macro.html" import render_field %}
+{% block title %}
+Add Bookmark
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1>Add a new url</h1>
+        <form action="{{ url_for('add') }}" method="post">
+            {{ form.hidden_tag() }}
+            <table>
+                {{ render_field(form.url, size=50) }}
+                {{ render_field(form.description, size=50) }}
+                <tr class="submit">
+                    <td></td>
+                    <td>
+                        <button type="submit">Submit</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </section>
+{% endblock %}
+{% block sidebar %}
+{% endblock %}

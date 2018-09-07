@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "form_macro.html" import render_field %}
+{% block title %}
+Thermos -- Sign up
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1>Sign in</h1>
+        <form action="{{ url_for('login') }}" method="post">
+            {{ form.hidden_tag() }}
+            <table>
+                {{ render_field(form.username, size=50) }}
+                {{ render_field(form.password, size=50) }}
+                <tr class="submit">
+                    <td></td>
+                    <td>
+                        <button type="submit">Login</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </section>
+{% endblock %}
+
