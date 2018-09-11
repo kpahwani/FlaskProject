@@ -1,5 +1,5 @@
 from datetime import datetime
-from thermos import db
+from thermos.views import db
 from sqlalchemy import desc
 
 

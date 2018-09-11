@@ -2,41 +2,18 @@
 Module
 """
 import os
-from flask import Flask, render_template, url_for, request, redirect, flash, session
-from forms import BookmarkForm, LoginForm, RegisterForm, UploadFileForm, MailForm
-
+from thermos import app, db
+from flask import render_template, url_for, request, redirect, flash, session
+from thermos.forms import BookmarkForm, LoginForm, RegisterForm, UploadFileForm, MailForm
+from thermos.models import Bookmark, User
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-
-
 from flask_mail import Mail, Message
 
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = os.path.join(BASEDIR, 'uploads/')
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '\xe38\x00m\xb0\xb7\xb1\x8b\xfbP\xc2\x98!W\xbe\x9cW\xe5\x14' \
-                           '<\xba\xe2\xa6b'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASEDIR,
-                                                                    'thermos.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
-
 mail = Mail(app)
 
-app.config['MAIL_SERVER'] = 'smtp-mail.outlook.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'kaushal.pahwani@talentica.com'
-app.config['MAIL_PASSWORD'] = '1@Jaishadaram'
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-mail = Mail(app)
-
-# Import late as the db need to be initialised
-import models
-
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 bookmarks = []
 
@@ -49,7 +26,7 @@ def index():
     """
     if session.get('user'):
         return render_template('index.html',
-                               new_bookmarks=models.Bookmark.new_bookmarks(session['user'], 5),
+                               new_bookmarks=Bookmark.new_bookmarks(session['user'], 5),
                                upload_form=UploadFileForm(), mail_form=MailForm())
     else:
         flash('Login to continue')
@@ -65,7 +42,7 @@ def add():
     if session.get('user') and form.validate_on_submit():
         url = form.url.data
         description = form.description.data
-        bm = models.Bookmark(url=url, description=description, user_id=session['user'].get('id'))
+        bm = Bookmark(url=url, description=description, user_id=session['user'].get('id'))
         db.session.add(bm)
         db.session.commit()
         flash("Stored : {}".format(description))
@@ -83,7 +60,7 @@ def register():
         username = form.username.data
         password = form.password.data
         email = form.email.data
-        user = models.User(username=username, password=password, email=email)
+        user = User(username=username, password=password, email=email)
         db.session.add(user)
         db.session.commit()
         session['user'] = user.to_json()
@@ -100,7 +77,7 @@ def login():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        success, user = models.User.valid_user(username, password)
+        success, user = User.valid_user(username, password)
         if success:
             session['user'] = user.to_json()
             flash('Welcome {}'.format(user.username))

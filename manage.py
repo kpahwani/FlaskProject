@@ -2,7 +2,7 @@
 Doctsring
 """
 from flask_script import Manager, prompt_bool
-from thermos import app, db
+from thermos.views import app, db
 
 MANAGER = Manager(app)
 
@@ -27,4 +27,4 @@ def dropdb():
 
 
 if __name__ == '__main__':
-    MANAGER.run(host='0.0.0.0')
+    MANAGER.run()
