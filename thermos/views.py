@@ -2,7 +2,7 @@
 Module
 """
 import os
-from thermos import app, db, login_manager
+from thermos import app, db, login_manager, mail
 from flask import render_template, url_for, request, redirect, flash, session
 from thermos.forms import BookmarkForm, LoginForm, RegisterForm, UploadFileForm, MailForm
 from thermos.models import Bookmark, User
