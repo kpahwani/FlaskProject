@@ -13,7 +13,7 @@ Thermos -- Welcome
                 <ul>
                 {% for bookmarks in new_bookmarks %}
                     <li>
-                        {{ bookmarks.user }} added {{bookmarks.url }}
+                        <a href="{{ url_for('user', username=bookmarks.user.username) }}">{{ bookmarks.user.username }}</a> added {{bookmarks.url }}
                     </li>
                 {% endfor %}
                 </ul>

@@ -19,7 +19,7 @@
                 <a href="{{ url_for('index') }}"><h1 class="title">Thermos</h1></a>
                 <nav>
                     <ul>
-                        {% if session.get('user') %}
+                        {% if current_user.is_authenticated %}
                             <li><a href="{{ url_for('add')}}">Add url</a></li>
                             <li><a href="{{ url_for('logout') }}">Logout</a></li>
                         {% else %}

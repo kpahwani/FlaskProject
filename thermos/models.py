@@ -1,6 +1,8 @@
 from datetime import datetime
 from thermos.views import db
 from sqlalchemy import desc
+from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class Bookmark(db.Model):
@@ -14,26 +16,31 @@ class Bookmark(db.Model):
         return "Bookmark {} : {}".format(self.description, self.url)
 
     @staticmethod
-    def new_bookmarks(user, num):
-        return Bookmark.query.filter_by(user_id=user.get('id')).order_by(desc(Bookmark.date)).limit(num)
+    def new_bookmarks(num):
+        return Bookmark.query.order_by(desc(Bookmark.date)).limit(num)
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True)
-    password = db.Column(db.String(30), nullable=False, unique=False)
     email = db.Column(db.String(30), unique=True)
     bookmarks = db.relationship('Bookmark', backref='user', lazy='dynamic')
+    password_hash = db.Column(db.String(30))
+
+    @property
+    def password(self):
+        raise AttributeError("Password : write only field")
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     @staticmethod
-    def valid_user(username, password):
-        user = User.query.filter_by(username=username, password=password).first()
-        if user:
-            return True, user
-        return False, None
-
-    def to_json(self):
-        return {'username': self.username, 'id': self.id}
+    def get_by_username(username):
+        return User.query.filter_by(username=username).first()
 
     def __repr__(self):
         return "User {}".format(self.username)

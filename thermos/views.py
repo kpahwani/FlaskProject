@@ -2,47 +2,50 @@
 Module
 """
 import os
-from thermos import app, db
+from thermos import app, db, login_manager
 from flask import render_template, url_for, request, redirect, flash, session
 from thermos.forms import BookmarkForm, LoginForm, RegisterForm, UploadFileForm, MailForm
 from thermos.models import Bookmark, User
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-from flask_mail import Mail, Message
-
-db = SQLAlchemy(app)
-mail = Mail(app)
+from flask_mail import Message
+from flask_login import login_required, login_user, logout_user, current_user
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 bookmarks = []
 
 
+@login_manager.user_loader
+def load_user(userid):
+    return User.query.get(int(userid))
+
+
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
     """
     Function
     """
-    if session.get('user'):
+    if current_user.is_authenticated:
         return render_template('index.html',
-                               new_bookmarks=Bookmark.new_bookmarks(session['user'], 5),
+                               new_bookmarks=Bookmark.new_bookmarks(5),
                                upload_form=UploadFileForm(), mail_form=MailForm())
     else:
-        flash('Login to continue')
-        return render_template('signin.html', form=LoginForm())
+        return render_template('signup.html')
 
 
 @app.route('/add', methods=['GET', 'POST'])
+@login_required
 def add():
     """
     Function
     """
     form = BookmarkForm()
-    if session.get('user') and form.validate_on_submit():
+    if form.validate_on_submit():
         url = form.url.data
         description = form.description.data
-        bm = Bookmark(url=url, description=description, user_id=session['user'].get('id'))
+        bm = Bookmark(url=url, description=description, user_id=current_user.id)
         db.session.add(bm)
         db.session.commit()
         flash("Stored : {}".format(description))
@@ -63,7 +66,7 @@ def register():
         user = User(username=username, password=password, email=email)
         db.session.add(user)
         db.session.commit()
-        session['user'] = user.to_json()
+        login_user(user)
         return redirect(url_for('index'))
     return render_template('signup.html', form=form)
 
@@ -75,13 +78,12 @@ def login():
     """
     form = LoginForm()
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        success, user = User.valid_user(username, password)
-        if success:
-            session['user'] = user.to_json()
+        user = User.get_by_username(form.username.data)
+        if user is not None and user.check_password(form.password.data):
+            login_user(user)
             flash('Welcome {}'.format(user.username))
-            return redirect(url_for('index'))
+            return redirect(request.args.get('next') or url_for('user', username=user.username))
+        flash('Incorrect username/password')
     return render_template('signin.html', form=form)
 
 
@@ -129,13 +131,18 @@ def compose_mail():
     return redirect(url_for('index'))
 
 
+@app.route('/user/<username>')
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user=user)
+
+
 @app.route('/logout')
 def logout():
     """
     Function
     """
-    session.pop('user')
-    flash('Successfully logged out')
+    logout_user()
     return redirect(url_for('index'))
 
 

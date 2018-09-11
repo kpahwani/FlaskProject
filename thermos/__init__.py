@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
+from flask_login import LoginManager
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASEDIR, 'uploads/')
@@ -22,4 +23,12 @@ app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 db = SQLAlchemy(app)
 
-from thermos import views
+
+# login configuration
+login_manager = LoginManager()
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+
+import thermos.views
+import thermos.models

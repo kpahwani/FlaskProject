@@ -12,7 +12,7 @@ class BookmarkForm(Form):
 class RegisterForm(Form):
     username = StringField('Enter username', validators=[DataRequired()])
     password = PasswordField('Enter password', validators=[DataRequired()])
-    email = StringField('Enter email', validators=[DataRequired()])
+    email = StringField('Enter email', validators=[DataRequired(), Email()])
 
 
 class LoginForm(Form):
