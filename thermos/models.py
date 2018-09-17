@@ -1,5 +1,5 @@
 from datetime import datetime
-from thermos.views import db
+from thermos import db
 from sqlalchemy import desc
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash

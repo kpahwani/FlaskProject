@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_login import LoginManager
 from flask_moment import Moment
+from flask_debugtoolbar import DebugToolbarExtension
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASEDIR, 'uploads/')
@@ -13,6 +14,8 @@ app.config['SECRET_KEY'] = '\xe38\x00m\xb0\xb7\xb1\x8b\xfbP\xc2\x98!W\xbe\x9cW\x
                            '<\xba\xe2\xa6b'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASEDIR,
                                                                     'thermos.db')
+app.config['DEBUG']=True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS']=False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAIL_SERVER'] = 'smtp-mail.outlook.com'
@@ -30,8 +33,16 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-#Moment
+# Moment
 moment = Moment(app)
+
+# Configure debug toolbar
+toolbar = DebugToolbarExtension(app)
+
+# Blueprint configuration
+from .auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint, url_prefix='/auth')
+
 
 import thermos.views
 import thermos.models
