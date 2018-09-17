@@ -1,12 +1,14 @@
 from flask_wtf import FlaskForm as Form
 from wtforms.fields import StringField, PasswordField, MultipleFileField, TextAreaField
 from wtforms.fields.html5 import URLField, EmailField
-from wtforms.validators import DataRequired, url, Email
+from wtforms.validators import DataRequired, url, Email, Regexp
 
 
 class BookmarkForm(Form):
     url = URLField('The URL for your bookmark:', validators=[DataRequired(), url])
     description = StringField('Add an optional description:')
+    tags = StringField('Tags', validators=[Regexp(r'^[a-zA-Z0-9, ]*$',
+                                                  message='Tags can only contain letters and numbers')])
 
 
 class RegisterForm(Form):
