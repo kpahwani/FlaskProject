@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "form_macro.html" import render_field %}
+{% block title %}
+Thermos -- Delete
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1 style="clear:both ">Confirm delete</h1>
+        {% include "bookmark.html" %}
+        <form action="{{ url_for('delete_bookmark', bookmark_id=bookmark.id) }}" method="post">
+            <span style="color:red">Are you sure you want to delete?</span><br>
+            <a href="{{ url_for('user', username=current_user.username) }}"><button type="button">No, take me back</button></a>
+            <button type="submit">Yes I'm sure</button>
+        </form>
+    </section>
+{% endblock %}
+

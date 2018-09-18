@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}
+User bookmarks
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1 style="clear:both">Book marks for user {{ user.username }}</h1>
+        {% with bookmarks = user.bookmarks %}
+            {% if bookmarks.count()>0  %}
+                {% include "bookmark_list.html" %}
+            {% else %}
+                <p>No bookmarks added yet.</p>
+            {% endif %}
+        {% endwith %}
+    </section>
+{% endblock %}
+{% block sidebar %}
+{% endblock %}

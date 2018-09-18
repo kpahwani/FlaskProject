@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}
+Thermos -- Bookmark tagged {{ tag }}
+{% endblock %}
+
+{% block content %}
+    <article>
+        <h1 style="clear:both">Book tagged {{ tag }}</h1>
+        {% if tag.bookmarks.count()>0  %}
+            {% with bookmarks = tag.bookmarks  %}
+                {% include "bookmark_list.html" %}
+            {% endwith %}
+        {% else %}
+            No bookmarks tagged with {{ tag }}
+        {% endif %}
+    </article>
+{% endblock %}
+
