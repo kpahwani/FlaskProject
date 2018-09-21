@@ -16,7 +16,7 @@ Thermos -- Welcome
         </header>
         <h2>Upload files</h2>
         <section>
-            <form action="{{ url_for('upload') }}" method="post" enctype=multipart/form-data>
+            <form action="{{ url_for('main.upload') }}" method="post" enctype=multipart/form-data>
                 {{ upload_form.hidden_tag() }}
                 <table>
                     {{ render_field(upload_form.uploaded_files, size=50) }}
@@ -31,7 +31,7 @@ Thermos -- Welcome
         </section>
         <h2>Compose mail</h2>
         <section>
-            <form action="{{ url_for('compose_mail') }}" method="post" enctype=multipart/form-data>
+            <form action="{{ url_for('main.compose_mail') }}" method="post" enctype=multipart/form-data>
                 {{ mail_form.hidden_tag() }}
                 <table>
                     {{ render_field(mail_form.recipient, size=50) }}

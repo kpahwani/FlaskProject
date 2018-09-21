@@ -8,9 +8,9 @@ Thermos -- Delete
     <section>
         <h1 style="clear:both ">Confirm delete</h1>
         {% include "bookmark.html" %}
-        <form action="{{ url_for('delete_bookmark', bookmark_id=bookmark.id) }}" method="post">
+            <form action="{{ url_for('bookmark.delete_bookmark', bookmark_id=bookmark.id) }}" method="post">
             <span style="color:red">Are you sure you want to delete?</span><br>
-            <a href="{{ url_for('user', username=current_user.username) }}"><button type="button">No, take me back</button></a>
+            <a href="{{ url_for('user.user', username=current_user.username) }}"><button type="button">No, take me back</button></a>
             <button type="submit">Yes I'm sure</button>
         </form>
     </section>

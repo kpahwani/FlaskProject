@@ -7,20 +7,20 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="../static/css/normalize.min.css">
-        <link rel="stylesheet" href="../static/css/main.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
-        <script src="../static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
     </head>
     <body>
 
         <div class="header-container">
             <header class="wrapper clearfix">
-                <a href="{{ url_for('index') }}"><h1 class="title">Thermos</h1></a>
+                <a href="{{ url_for('main.index') }}"><h1 class="title">Thermos</h1></a>
                 <nav>
                     <ul>
                         {% if current_user.is_authenticated %}
-                            <li><a href="{{ url_for('add')}}">Add url</a></li>
+                            <li><a href="{{ url_for('bookmark.add')}}">Add url</a></li>
                             <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                         {% else %}
                             <li><a href="{{ url_for('auth.login') }}">Sign in</a></li>
@@ -54,7 +54,7 @@
                     <aside>
                         <h3>Tags</h3>
                             {% for t in all_tags() %}
-                                <a href="{{ url_for('tag', name=t) }}">{{ t }}</a>
+                                <a href="{{ url_for('bookmark.tag', name=t) }}">{{ t }}</a>
                             {% endfor %}
                     </aside>
                 {% endblock %}

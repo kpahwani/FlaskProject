@@ -24,7 +24,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         login_user(user)
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     return render_template('signup.html', form=form)
 
 
@@ -39,7 +39,7 @@ def login():
         if user is not None and user.check_password(form.password.data):
             login_user(user)
             flash('Welcome {}'.format(user.username))
-            return redirect(request.args.get('next') or url_for('user', username=user.username))
+            return redirect(request.args.get('next') or url_for('user.user', username=user.username))
         flash('Incorrect username/password')
     return render_template('signin.html', form=form)
 
@@ -50,4 +50,4 @@ def logout():
     Function
     """
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
